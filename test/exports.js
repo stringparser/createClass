@@ -4,14 +4,14 @@ exports = module.exports = function (api) {
 
   it('createClass() should return a new constructor', function () {
     var Tor = api();
-    Tor.super_.should.be.eql(api);
+    Tor.super_.should.be.eql(api.EmptyClass);
     (new Tor()).constructor.should.be.eql(Tor);
   });
 
-  it('createClass(object proto) proto with new constructor', function () {
-    var proto = {method: function () {}};
-    var Ctor = api(proto);
-    Ctor.prototype.should.have.property('method', proto.method);
+  it('createClass(Object spec) spec with new constructor', function () {
+    var spec = {method: function () {}};
+    var Ctor = api(spec);
+    Ctor.prototype.should.have.properties(spec);
   });
 
 
