@@ -1,5 +1,4 @@
 
-
 // empty values
 function EmptyClass () {}
 
@@ -22,11 +21,11 @@ exports = module.exports = function createClass (spec) {
 
   // default base constructor
   if (typeof Constructor !== 'function') {
-    Constructor = function BaseConstructor (props) {
-      if (!(this instanceof Tor)) {
-        return new Tor(props);
+    Constructor = function BaseConstructor (/* arguments */) {
+      if (!(this instanceof Constructor)) {
+        return Constructor.create.apply(null, arguments);
       } else if (typeof Constructor.super_ === 'function') {
-        Constructor.super_.call(this, props);
+        Constructor.super_.apply(this, arguments);
       }
     }
   }
@@ -73,8 +72,6 @@ exports = module.exports = function createClass (spec) {
   // give a default super_ so Constructor.super_.call does not fail
   if (!SuperTor && typeof Constructor.super_ !== 'function') {
     Constructor.super_ = EmptyClass;
-    Constructor.prototype = new EmptyClass();
-    Constructor.prototype.constructor = Constructor;
   }
 
   // if there is no create give a default
@@ -91,5 +88,10 @@ exports = module.exports = function createClass (spec) {
     };
   }
 
-  return Tor;
-};
+  return Constructor;
+}
+
+// export the empty class for testing
+if (process.cwd() === __dirname && process.env.NODE_ENV == 'test') {
+  exports.EmptyClass = EmptyClass;
+}
