@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "standalone createClass a là React",
   "main": "index.js",
+  "url": "http://github.com/stringparser/createClass",
   "scripts": {
     "lint": "eslint *.js test lib",
     "test": "npm run lint && NODE_ENV=test mocha test/index.js"
