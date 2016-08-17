@@ -2,7 +2,11 @@
 
 [![build][b-build]][x-travis]
 
+---
+
 **Work in progress**
+
+---
 
 # createClass
 
