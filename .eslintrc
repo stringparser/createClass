@@ -1,11 +1,6 @@
 {
-  "env": {
-    "es6": true,
-    "node": true,
-    "mocha": true
-  },
   "rules": {
-    "strict": 2,
+    "strict": 0,
     "quotes": [2, "single", "avoid-escape"],
     "indent": ["error", 2, {"SwitchCase": 1}],
     "eol-last": 2,
@@ -20,11 +15,5 @@
     "no-use-before-define": 0,
     "no-underscore-dangle": 0,
     "no-unused-expressions": 2
-  },
-  "parser": "babel-eslint",
-  "parserOptions": {
-    "ecmaFeatures": {
-      "jsx": true
-    }
   }
 }
