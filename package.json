@@ -1,8 +1,8 @@
 {
   "name": "createClass",
   "main": "index.js",
-  "version": "0.1.1",
-  "homepage": "http://github.com/stringparser/createClass",
+  "version": "0.1.2",
+  "repository": "https://github.com/stringparser/createClass",
   "description": "createClass a là React",
   "scripts": {
     "lint": "eslint *.js test lib",
