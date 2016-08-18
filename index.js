@@ -1,97 +1,63 @@
+// dependencies
+var util = require('./lib/util');
 
 // empty values
-function EmptyClass () {}
+var emptyArray = [];
 
-// assign origin properties into source properties
-function assign (source, origin) {
-  if (source && origin) {
-    for (var prop in origin) {
-      if (origin.hasOwnProperty(prop)) {
-        source[prop] = origin[prop];
-      }
-    }
-  }
-}
+// constants
+var RESERVED_KEYS = {
+  spec: ['mixins', 'create', 'statics'],
+  statics: ['super_', 'create', 'createClass']
+};
 
-exports = module.exports = function createClass (spec) {
+function createClass (spec) {
   spec = spec || {};
 
-  // use create for the constructor if given
-  var Constructor = spec.create;
+  // refs
+  var proto = null;
 
-  // default base constructor
-  if (typeof Constructor !== 'function') {
-    Constructor = function BaseConstructor (/* arguments */) {
-      if (!(this instanceof Constructor)) {
-        return Constructor.create.apply(null, arguments);
-      } else if (typeof Constructor.super_ === 'function') {
-        Constructor.super_.apply(this, arguments);
-      }
-    }
-  }
+  // checks and defaults
+  var mixins = util.type(spec.mixins).array || emptyArray;
+  var SuperTor = util.type(mixins.shift()).function || util.EmptyClass;
+  var Constructor = util.type(spec.create).function || util.EmptyConstructor;
 
-  // get the mixins
-  var mixins = spec.mixins && spec.mixins.length && spec.mixin;
-  var statics = spec.statics || 0;
+  // prototype setup
+  Constructor.super_ = SuperTor;
+  proto = Constructor.prototype = new SuperTor();
+  Constructor.prototype.constructor = Constructor;
 
-  // cleanup before adding spec to Constructor
-  delete spec.create;
-  delete spec.mixins;
-  delete spec.statics;
+  // add statics
+  util.assign(Constructor, spec.statics, RESERVED_KEYS.statics);
 
-  var SuperTor = null;
-
-  if (mixins) {
-    for (var index = mixins.length - 1; index > -1; ++index) {
-      var mixin = mixins[index];
-
-      if (typeof mixin !== 'function') {
-        continue;
-      }
-
-      // use the first constructor found as Super
-      if (!SuperTor) {
-        SuperTor = mixin;
-        Constructor.super_ = SuperTor;
-        Constructor.prototype = new SuperTor();
-        Constructor.prototype.constructor = Constructor;
-      }
-
+  // mix'em in
+  for (var index = mixins.length - 1; index > -1; --index) {
+    var mixin = mixins[index];
+    if (typeof mixin === 'function') {
       for (var name in mixin.prototype) {
-        if (mixin.prototype.hasOwnProperty(name) && !proto.hasOwnProperty(name)) {
-          Constructor.prototype[name] = mixin.prototype[name];
+        if (util.has(mixin.prototype, name) && !util.has(proto, name)) {
+          proto[name] = mixin.prototype[name];
         }
       }
     }
   }
 
-  // add static methods and spec to the prototype
-  assign(Constructor, statics);
-  assign(Constructor.prototype, spec);
+  // add any other properties to the prototpe skipping reserved keys
+  util.assign(Constructor.prototype, spec, RESERVED_KEYS.spec);
 
-  // give a default super_ so Constructor.super_.call does not fail
-  if (!SuperTor && typeof Constructor.super_ !== 'function') {
-    Constructor.super_ = EmptyClass;
-  }
-
-  // if there is no create give a default
-  if (typeof Constructor.create !== 'function') {
-    Constructor.create = function (_props_) {
-      return new Constructor(_props_);
-    };
-  }
-
-  // if there is no createClass give a default
-  if (typeof Constructor.createClass !== 'function') {
-    Constructor.createClass = function (_spec_) {
-      return createClass(_spec_);
-    };
-  }
+  // add create and createClass to build upon
+  Constructor.create = function (props, context, updater) {
+    return new Constructor(props, context, updater);
+  };
+  Constructor.createClass = function (_spec_) {
+    return createClass(_spec_);
+  };
 
   return Constructor;
 }
 
 // export the empty class for testing
 if (process.cwd() === __dirname && process.env.NODE_ENV == 'test') {
-  exports.EmptyClass = EmptyClass;
+  exports.RESERVED_KEYS = RESERVED_KEYS;
 }
+
+exports = module.exports = createClass;
