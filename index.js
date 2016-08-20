@@ -1,8 +1,6 @@
-// dependencies
-var util = require('./lib/util');
 
-// empty values
-var emptyArray = [];
+var type = require('utils-type');
+var util = require('./lib/util');
 
 // constants
 var RESERVED_KEYS = {
@@ -10,20 +8,17 @@ var RESERVED_KEYS = {
   statics: ['super_', 'create', 'createClass']
 };
 
-function createClass (spec) {
+exports = module.exports = function createClass (spec) {
   spec = spec || {};
 
-  // refs
-  var proto = null;
-
   // checks and defaults
-  var mixins = util.type(spec.mixins).array || emptyArray;
-  var SuperTor = util.type(mixins.shift()).function || util.EmptyClass;
-  var Constructor = util.type(spec.create).function || util.EmptyConstructor;
+  var mixins = type(spec.mixins).array || [];
+  var SuperTor = type(this).function || type(mixins.pop()).function;
+  var Constructor = type(spec.create).function || exports.getBaseConstructor();
 
   // prototype setup
-  Constructor.super_ = SuperTor;
-  proto = Constructor.prototype = new SuperTor();
+  SuperTor = Constructor.super_ = SuperTor || exports.getBaseClass();
+  var proto = Constructor.prototype = new SuperTor();
   Constructor.prototype.constructor = Constructor;
 
   // add statics
@@ -32,11 +27,13 @@ function createClass (spec) {
   // mix'em in
   for (var index = mixins.length - 1; index > -1; --index) {
     var mixin = mixins[index];
-    if (typeof mixin === 'function') {
-      for (var name in mixin.prototype) {
-        if (util.has(mixin.prototype, name) && !util.has(proto, name)) {
-          proto[name] = mixin.prototype[name];
-        }
+    if (typeof mixin !== 'function') {
+      continue;
+    }
+
+    for (var name in mixin.prototype) {
+      if (mixin.prototype.hasOwnProperty(name) && !proto.hasOwnProperty(name)) {
+        proto[name] = mixin.prototype[name];
       }
     }
   }
@@ -48,16 +45,18 @@ function createClass (spec) {
   Constructor.create = function (props, context, updater) {
     return new Constructor(props, context, updater);
   };
-  Constructor.createClass = function (_spec_) {
-    return createClass(_spec_);
-  };
+  Constructor.createClass = createClass;
 
   return Constructor;
-}
+};
 
-// export the empty class for testing
+// export base functions (so they can be overriden)
+exports.getBaseClass = util.getBaseClass;
+exports.getBaseConstructor = util.getBaseConstructor;
+
+// exports for testing
 if (process.cwd() === __dirname && process.env.NODE_ENV == 'test') {
-  exports.RESERVED_KEYS = RESERVED_KEYS;
+  exports.internals = {
+    RESERVED_KEYS: RESERVED_KEYS
+  };
 }
-
-exports = module.exports = createClass;
