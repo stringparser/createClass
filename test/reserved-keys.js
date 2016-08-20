@@ -1,6 +1,6 @@
 
 
-exports = module.exports = function (API, util, should) {
+exports = module.exports = function (API, should) {
 
   it('should not be set on the prototype', function () {
     var A = function () {};

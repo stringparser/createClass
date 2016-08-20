@@ -1,11 +1,11 @@
 
 
-exports = module.exports = function (API, util, should) {
+exports = module.exports = function (API, should) {
 
   it('API() should have EmptyClass as super_', function () {
     var Tor = API();
     should(Tor).have.property('super_');
-    should(Tor.super_).be.eql(util.EmptyClass);
+    should(Tor.super_).be.eql(API.getBaseClass());
   });
 
   it('API() should return a constructor function', function () {

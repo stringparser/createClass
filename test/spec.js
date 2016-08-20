@@ -1,5 +1,5 @@
 
-exports = module.exports = function (API, util, should) {
+exports = module.exports = function (API, should) {
 
   it('API(Object spec) constructor should have spec', function () {
     var spec = {method: function () {}};
