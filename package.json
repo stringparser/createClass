@@ -1,7 +1,7 @@
 {
   "name": "createClass",
   "main": "index.js",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "repository": "https://github.com/stringparser/createClass",
   "description": "createClass inspired by React",
   "scripts": {
