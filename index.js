@@ -21,30 +21,11 @@ function EmptyClass () {}
 function assign (dest, src, reserved) {
   if (dest && src) {
     for (var name in src) {
-      if (src[name] && reserved.indexOf(name) < 0) {
+      if (reserved.indexOf(name) < 0 && src.hasOwnProperty(name)) {
         dest[name] = src[name];
       }
     }
   }
-}
-
-/**
- * get an empty constructor
- * be able to use super(arguments...) on instantiation when not specified
- * @param {?object} spec Class specification
- * @returns {function} constructor to build the new class with
-**/
-function getConstructor (spec) {
-  if (spec && typeof spec.create === 'function') {
-    return spec.create;
-  }
-  return (function EmptyConstructor (/* arguments */) {
-    if (this instanceof EmptyConstructor) {
-      EmptyConstructor.super_.apply(this, arguments);
-    } else {
-      throw new Error('call the constructor using `new`');
-    }
-  });
 }
 
 /**
@@ -57,35 +38,42 @@ function getConstructor (spec) {
 **/
 function createClass (Super, spec) {
   spec = spec || Super || emptyObject;
+  Super = typeof Super === 'function' && Super ||
+    typeof this === 'function' && this ||
+    EmptyClass;
 
   // checks and defaults
   var mixins = Array.isArray(spec.mixins) && spec.mixins || emptyArray;
-  var Constructor = getConstructor(spec);
-  var SuperConstructor = (typeof Super === 'function' && Super) ||
-    (typeof this === 'function' && this) ||
-    EmptyClass;
+  var Constructor = typeof spec.create === 'function' && spec.create || (
+    function EmptyConstructor () {
+      if (!(this instanceof EmptyConstructor)) {
+        throw new Error('call the constructor using `new`');
+      } else if (typeof EmptyConstructor.super_ === 'function') {
+        EmptyConstructor.super_.apply(this, arguments);
+      }
+    }
+  );
 
   // prototype setup
-  inherits(Constructor, SuperConstructor);
+  inherits(Constructor, Super);
+
+  // mix'em in
+  var proto = Constructor.prototype;
+
+  for (var index = mixins.length - 1; index > -1; --index) {
+    var value = mixins[index];
+    var mixin = typeof value === 'function' && value.prototype || value;
+
+    for (var name in mixin) {
+      if (mixin.hasOwnProperty(name) && !proto.hasOwnProperty(name)) {
+        proto[name] = mixin[name];
+      }
+    }
+  }
 
   // add any prototype methods and statics
   assign(Constructor.prototype, spec, RESERVED_KEYS.spec);
   assign(Constructor, spec.statics, RESERVED_KEYS.statics);
-
-  // mix'em in
-  var proto = Constructor.prototype;
-  for (var index = mixins.length - 1; index > -1; --index) {
-    var value = mixins[index]
-    var mixin = typeof value === 'function' && value.prototype || value;
-
-    if (mixin) {
-      for (var name in mixin) {
-        if (mixin[name] && !proto[name]) {
-          proto[name] = mixin[name];
-        }
-      }
-    }
-  }
 
   // add create and createClass to build upon
   Constructor.create = function (a, b, c) { return new Constructor(a, b, c); };
