@@ -21,7 +21,7 @@ function EmptyClass () {}
 function assign (dest, src, reserved) {
   if (dest && src) {
     for (var name in src) {
-      if (src.hasOwnProperty(name) && reserved.indexOf(name) < 0) {
+      if (src[name] && reserved.indexOf(name) < 0) {
         dest[name] = src[name];
       }
     }
@@ -80,7 +80,7 @@ function createClass (Super, spec) {
 
     if (mixin) {
       for (var name in mixin) {
-        if (mixin.hasOwnProperty(name) && !proto.hasOwnProperty(name)) {
+        if (mixin[name] && !proto[name]) {
           proto[name] = mixin[name];
         }
       }
