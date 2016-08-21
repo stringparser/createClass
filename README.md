@@ -126,7 +126,6 @@ The module is using [`inherits`](https://github.com/isaacs/inherits) to do inher
 ```js
 var Animal = createClass({
   create: function Animal (props) {
-    Animal.super_.apply(this, arguments);
     this.props = props;
   }
 });
@@ -149,7 +148,7 @@ console.log(cat.props);
 
 ### spec.mixins
 
-Same as `merge`/`extend`/`Object.assign` with the resulting class prototype. The element at the tail of the array is the first to be used and from the back to the beginning of the array.
+Same as `merge`/`extend`/`Object.assign` with the resulting class prototype. The element at the tail of the array is the first to be used and from there back to the beginning of the array.
 
 Each element of the `Array` can be `object` or `function`.
 
@@ -200,9 +199,7 @@ var Cat = createClass(Animal, {
 });
 ```
 
-Mixins are good looking because you can put them together with just objects, and one may think there is less of the "[you wanted a bannana but you got a gorilla holding a banana](http://www.johndcook.com/blog/2011/07/19/you-wanted-banana/)" problem,  but there are still issues with them:
-
-[mixins are considered harmful](https://facebook.github.io/react/blog/2016/07/13/mixins-considered-harmful.html#why-mixins-are-broken).
+Mixins are good looking because you can put them together with just objects, and one may think there is less of the "[you wanted a bannana but you got a gorilla holding a banana](http://www.johndcook.com/blog/2011/07/19/you-wanted-banana/)" problem,  but there are still issues with them see: [mixins are considered harmful](https://facebook.github.io/react/blog/2016/07/13/mixins-considered-harmful.html#why-mixins-are-broken).
 
 So we should be careful grasshoppers.
 
