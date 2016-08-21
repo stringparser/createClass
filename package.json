@@ -3,13 +3,14 @@
   "main": "index.js",
   "version": "0.1.2",
   "repository": "https://github.com/stringparser/createClass",
-  "description": "React-like createClass",
+  "description": "createClass inspired by React",
   "scripts": {
     "lint": "eslint *.js test lib",
     "test": "npm run lint && NODE_ENV=test mocha test/index.js"
   },
   "keywords": [
     "class",
+    "create",
     "createClass"
   ],
   "author": "Javier Carrillo Milla <stringparser@gmail.com>",
@@ -20,6 +21,6 @@
     "should": "^11.1.x"
   },
   "dependencies": {
-    "utils-type": "^0.16.x"
+    "inherits": "^2.0.x"
   }
 }
