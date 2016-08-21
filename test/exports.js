@@ -1,12 +1,6 @@
 
 exports = module.exports = function (API, should) {
 
-  it('API() should have EmptyClass as super_', function () {
-    var Tor = API();
-
-    should(Tor.super_).be.eql(API.internals.EmptyClass);
-  });
-
   it('API() should return a constructor function', function () {
     var Tor = API();
 

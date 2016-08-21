@@ -38,9 +38,7 @@ function assign (dest, src, reserved) {
 **/
 function createClass (Super, spec) {
   spec = spec || Super || emptyObject;
-  Super = typeof Super === 'function' && Super ||
-    typeof this === 'function' && this ||
-    EmptyClass;
+  Super = typeof Super === 'function' && Super || this;
 
   // checks and defaults
   var mixins = Array.isArray(spec.mixins) && spec.mixins || emptyArray;
@@ -55,7 +53,9 @@ function createClass (Super, spec) {
   );
 
   // prototype setup
-  inherits(Constructor, Super);
+  if (typeof Super === 'function') {
+    inherits(Constructor, Super);
+  }
 
   // mix'em in
   var proto = Constructor.prototype;

@@ -41,7 +41,6 @@ exports = module.exports = function (API, should) {
     var Tor = API({ statics: statics });
 
     RESERVED_KEYS.statics.forEach(function (key) {
-      should(Tor).have.property(key);
       should(Tor[key]).not.be.eql(statics[key]);
     });
   });
