@@ -2,8 +2,6 @@
 
 [![build][b-build]][travis]
 
-# createClass
-
 [docs](#docs) -
 [install](#install)
 
