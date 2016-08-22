@@ -11,7 +11,6 @@ var RESERVED_KEYS = {
 // empty values
 var emptyArray = [];
 var emptyObject = {};
-function EmptyClass () {}
 
 /**
  * merge dest properties into src object skipping reserved keys
@@ -88,7 +87,6 @@ exports = module.exports = createClass;
 // exports for testing
 if (process.cwd() === __dirname && process.env.NODE_ENV == 'test') {
   exports.internals = {
-    EmptyClass: EmptyClass,
     RESERVED_KEYS: RESERVED_KEYS
   };
 }
