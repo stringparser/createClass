@@ -178,7 +178,7 @@ var AnimalMixin = {
 };
 
 var Bear = createClass(Animal, {
-  mixin: [AnimalMixin, Mammal]
+  mixins: [AnimalMixin, Mammal]
   poop: function () {
     console.log('Bear pooping now!');
     console.log('.');

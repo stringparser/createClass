@@ -16,13 +16,13 @@ var emptyObject = {};
  * merge dest properties into src object skipping reserved keys
  * @param {object} src object to copy from
  * @param {object} dest object to assign properties to
+ * @param {array} reserved array to check serverved keys on
+ * @returns {object} dest object with src enuerable properties
 **/
 function assign (dest, src, reserved) {
-  if (dest && src) {
-    for (var name in src) {
-      if (reserved.indexOf(name) < 0 && src.hasOwnProperty(name)) {
-        dest[name] = src[name];
-      }
+  for (var name in src) {
+    if (reserved.indexOf(name) < 0 && src.hasOwnProperty(name)) {
+      dest[name] = src[name];
     }
   }
 }
