@@ -25,6 +25,7 @@ function assign (dest, src, reserved) {
       dest[name] = src[name];
     }
   }
+  return dest;
 }
 
 /**
